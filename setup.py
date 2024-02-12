@@ -18,4 +18,5 @@ setup(
     ],
     keywords="validation",
     install_requires=["pydantic"],
+    package_data={"validpeas": ["py.typed"]},
 )
