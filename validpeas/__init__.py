@@ -52,6 +52,36 @@ def processor_from_validator(validator: Validator) -> ProcessorFunc:
     return processor
 
 
+def make_composite_processor(
+    name: str | None = None,
+) -> Callable[[CompositeValidatorFunc], ProcessorFunc]:
+    def decorator(func: CompositeValidatorFunc) -> ProcessorFunc:
+        name_ = func.__name__ if name is None else name
+
+        def processor(
+            data: Any, dependencies: list[ValidationResult] = []
+        ) -> ValidationResult:
+            dependencies_passed = all_passed(dependencies)
+            if not dependencies_passed:
+                return ValidationResult(
+                    validator_name=name_,
+                    passed=False,
+                    dependencies=dependencies,
+                )
+            sub_results = func(data)
+            passed = all_passed(sub_results)
+            return ValidationResult(
+                validator_name=name_,
+                passed=passed,
+                sub_results=sub_results,
+                dependencies=dependencies,
+            )
+
+        return processor
+
+    return decorator
+
+
 ########## Simplified Results ##########
 
 
