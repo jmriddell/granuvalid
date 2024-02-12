@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 from typing import Any, Callable, Protocol
-from json import loads, dumps
-from itertools import pairwise
 
 
 ValidatorFunc = Callable[[Any], bool]
